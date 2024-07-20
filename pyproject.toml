@@ -11,6 +11,9 @@ youtube-dl = {git = "https://github.com/ytdl-org/ytdl-nightly.git", rev = "2024.
 opencv-python = "^4.10.0.84"
 openai = "^1.35.13"
 youtube-transcript-api = "^0.6.2"
+fastapi-slim = "^0.111.1"
+fastapi-cli = "^0.0.4"
+uvicorn = {extras = ["standard"], version = "^0.30.1"}
 
 
 [tool.poetry.group.dev.dependencies]

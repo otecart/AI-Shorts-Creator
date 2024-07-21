@@ -185,7 +185,7 @@ def crop_video2(faces, input_file: str, output_file: str):
             # Constants for cropping
             CROP_RATIO = 0.9  # Adjust the ratio to control how much of the face is visible in the cropped video
             VERTICAL_RATIO = 9 / 16  # Aspect ratio for the vertical video
-            BATCH_DURATION = 5  # Duration of each batch in seconds
+            # BATCH_DURATION = 5  # Duration of each batch in seconds
 
             # Read the input video
             cap = cv2.VideoCapture(input_file)
@@ -199,7 +199,7 @@ def crop_video2(faces, input_file: str, output_file: str):
             target_width = int(target_height * VERTICAL_RATIO)
 
             # Calculate the number of frames per batch
-            frames_per_batch = int(cap.get(cv2.CAP_PROP_FPS) * BATCH_DURATION)
+            # frames_per_batch = int(cap.get(cv2.CAP_PROP_FPS) * BATCH_DURATION)
 
             # Create a VideoWriter object to save the output video
             fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -242,12 +242,12 @@ def crop_video2(faces, input_file: str, output_file: str):
                     output_video.write(resized_frame)
 
                     # Check if the current frame index is divisible by frames_per_batch
-                    if cap.get(cv2.CAP_PROP_POS_FRAMES) % frames_per_batch == 0:
-                        # Analyze the lip movement or facial muscle activity within the batch
-                        is_talking = is_talking_in_batch(output_frames)
+                    # if cap.get(cv2.CAP_PROP_POS_FRAMES) % frames_per_batch == 0:
+                    #     # Analyze the lip movement or facial muscle activity within the batch
+                    #     is_talking = is_talking_in_batch(output_frames)
 
-                        # Adjust the focus based on the speaking activity
-                        adjust_focus(resized_frame, is_talking)
+                    #     # Adjust the focus based on the speaking activity
+                    #     adjust_focus(resized_frame, is_talking)
 
             # Release the input and output video objects
             cap.release()

@@ -14,6 +14,9 @@ youtube-transcript-api = "^0.6.2"
 fastapi-slim = "^0.111.1"
 fastapi-cli = "^0.0.4"
 uvicorn = {extras = ["standard"], version = "^0.30.1"}
+taskiq = "^0.11.6"
+taskiq-aio-pika = "^0.4.0"
+taskiq-redis = "^1.0.0"
 
 
 [tool.poetry.group.dev.dependencies]

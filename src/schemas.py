@@ -1,5 +1,5 @@
 import re
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from pydantic import BaseModel, field_validator
 from pydantic_core import PydanticCustomError
@@ -59,3 +59,9 @@ response_obj = """{
     },
   ]
 }"""
+
+
+class AsyncResponse(BaseModel):
+    is_err: bool
+    return_value: Any
+    execution_time: float

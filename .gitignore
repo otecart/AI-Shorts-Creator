@@ -1,7 +1,12 @@
 .vscode/
 .venv/
 __pycache__/
+.rabbitmq-data/
+.redis-data/
+.ruff_cache/
+static/
 
 .env
 *.mp4
 *.log
+.DS_Store

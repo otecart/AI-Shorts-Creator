@@ -1,4 +1,4 @@
-#AI-Shorts-Creator! 🎥✂️ (WIP, You Might face some Bugs)
+# AI-Shorts-Creator! 🎥✂️
 
 AI-Shorts-Creator is a powerful tool designed for content creators, podcasters, and video enthusiasts to effortlessly extract captivating segments from their videos. Leveraging the advanced language model GPT-4, this innovative solution intelligently analyzes video transcripts to identify the most viral and exciting moments. By harnessing the capabilities of FFmpeg and OpenCV, AI-Shorts-Creator automatically crops videos, allowing you to focus on the key highlights and provide an enhanced viewing experience.
 
@@ -6,13 +6,16 @@ AI-Shorts-Creator is a powerful tool designed for content creators, podcasters, 
 
 - Automatically extract captivating segments from videos.
 - Identify the most viral and exciting moments using GPT-4.
-- Crop videos to emphasize key highlights with precise face detection.
+- Crop videos to emphasize key highlights with precise face detection. (*Doesn't work*)
 - Streamline video editing and save time by eliminating manual searching.
-- Work seamlessly with various video formats for maximum compatibility.
-- Enhance the viewing experience for your audience with perfectly cropped highlights.
+- Work seamlessly with various video formats for maximum compatibility. (*Only works with .mp4*)
+- Enhance the viewing experience for your audience with perfectly cropped highlights. (*Cropping doesn't work*)
 
 
 ## Examples: 
+
+<details>
+  <summary>Fake examples</summary>
 
 Source Video : https://www.youtube.com/watch?v=NHaczOsMQ20
 ![thumbnail](https://github.com/NisaarAgharia/AI-Video-Cropper/assets/22457544/7dbf9b92-2a08-4948-bb49-e41350ae4a02)
@@ -25,50 +28,41 @@ Source Video : https://www.youtube.com/watch?v=NHaczOsMQ20
   <img src="https://github.com/NisaarAgharia/AI-Video-Cropper/assets/22457544/8aeeb666-cff0-493a-8a9a-18780badd79f" alt="Demo GIF 3" width="280"/>
 </div>
 
-
 https://github.com/NisaarAgharia/AI-Shorts-Creator/assets/22457544/318c8cf1-bcc3-4ed7-a979-7af17e545e6e
 
+</details>
 
-Get started with AI-Shorts-Creator today and unlock the potential of your videos like never before!
-
-Requirements
-- Python 3.x
-- `pytube` library (install with `pip install pytube`)
-- `opencv-python` library (install with `pip install opencv-python`)
-- `openai` library (install with `pip install openai`)
-- `youtube-transcript-api` library (install with `pip install youtube-transcript-api`)
-- FFmpeg (install according to your operating system)
+## Requirements
+- Python 3.12+
+- poetry
+- FFmpeg
+- Redis
+- RabbitMQ
 
 ## Usage
 
 1. Install the required libraries by running the following command:
 
 ```shell
-pip install -r requirements.txt
+poetry install
 ```
 
-2. Install FFmpeg by following the installation instructions for your operating system. Make sure the `ffmpeg` command is accessible from the command line.
+2. Make sure the `ffmpeg` command is accessible from the command line.
 
-3. Set up your OpenAI API key by replacing `openai.api_key = ''` with your actual OpenAI API key.
+3. Rename `.env.example` to `.env` and set all necessary variables.
 
-4. Modify the `video_id` variable in the `main()` function to specify the YouTube video you want to process.
+4. Make sure your Redis and RabbitMQ instances are running.
 
-5. Run the script:
+5. Run taskiq worker
 
 ```shell
-python auto_cropper.py
+poetry run taskiq worker src.worker:broker src.tasks
 ```
 
-The script will download the YouTube video, analyze its transcript using OpenAI's GPT-4, extract the best sections based on the analysis, crop the video using FFmpeg, and apply face detection using OpenCV to further refine the cropping.
+6. Run fastapi server
 
-## Additional Information
+```shell
+poetry run fastapi run src/main.py
+```
 
-- The `download_video(url, filename)` function downloads a YouTube video by providing the URL and specifying the filename.
-- The `segment_video(response)` function segments the video into interesting sections based on a transcript analysis using OpenAI's GPT-4 model.
-- The `detect_faces(video_file)` function uses face detection to identify faces in a video file.
-- The `crop_video(faces, input_file, output_file)` function crops the video around the detected faces using FFmpeg.
-- The `is_talking_in_batch(frames)` function analyzes the lip movement or facial muscle activity within a batch of frames to determine if talking behavior is present.
-- The `adjust_focus(frame, talking)` function applies visual effects or adjustments to emphasize the speaker in the frame.
-
-Please note that the GPT-4 model and transcript analysis functionality in the provided code are simulated and not fully functional. You would need a valid OpenAI API key and a working GPT-4 model to perform transcript analysis.
-
+This will run AI-Shorts-Creator server on port `8000` (by default). It's API could be found on `http://localhost:8000/docs` (by default).

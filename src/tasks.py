@@ -1,6 +1,8 @@
 import math
+import os
 import subprocess
 from pathlib import Path
+from time import time
 
 import youtube_dl
 from openai import OpenAI
@@ -48,10 +50,11 @@ def segment_video(
     video_path: Path, segments: list[Segment], video_id: str
 ) -> list[str]:
     segment_paths = []
+    output_prefix = hash(os.environ["SALT"] + video_id + str(time()))
     for i, segment in enumerate(segments, start=1):
         start_time = math.floor(float(segment.get("start_time", 0)))
         end_time = math.ceil(float(segment.get("end_time", 0))) + 2
-        output_file = Path("static", "output", f"{video_id}_{i:03d}.mp4")
+        output_file = Path("static", "output", f"{output_prefix}_{i:03d}.mp4")
         command = f"ffmpeg -i {video_path} -ss {start_time} -to {end_time} -c copy {output_file}"
         logger.info("Running command: %s", command)
         subprocess.call(

@@ -65,3 +65,7 @@ class AsyncResponse(BaseModel):
     is_err: bool
     return_value: Any
     execution_time: float
+
+
+class FaceDetectionTaskInput(BaseModel):
+    video_url: str

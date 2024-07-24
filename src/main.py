@@ -7,7 +7,8 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 
 from src.logger import get_logger
-from src.schemas import AsyncResponse, MakeShortsInput
+from src.schemas import AsyncResponse, FaceDetectionTaskInput, MakeShortsInput
+from src.tasks import async_test_face_detection
 from src.tasks import make_shorts as async_make_shorts
 from src.worker import broker, result_backend
 
@@ -56,3 +57,9 @@ async def get_task(task_id: str):
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND, detail="Task not found or not ready"
     )
+
+
+@app.post("/faces")
+async def create_face_detection_task(data: FaceDetectionTaskInput):
+    task = await async_test_face_detection.kiq(data.video_url)
+    return {"task_id": task.task_id}

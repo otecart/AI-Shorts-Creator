@@ -4,6 +4,8 @@ import subprocess
 from pathlib import Path
 from time import time
 
+import cv2
+import cv2.data
 import youtube_dl
 from openai import OpenAI
 from taskiq import TaskiqDepends
@@ -12,6 +14,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from src.logger import get_logger
 from src.schemas import MakeShortsInput, Segment, response_obj
 from src.text_segmenters import OpenAISegmenter, TextSegmenter
+from src.utils import get_video_id
 from src.worker import broker
 
 logger = get_logger("app.tasks")
@@ -95,3 +98,52 @@ def make_shorts(
     logger.info("Segments for video %s saved", data.video_id)
 
     return {"video_urls": output_paths}
+
+
+@broker.task
+def async_test_face_detection(video_url: str):
+    logger.info("Running face detection task")
+
+    video_id = get_video_id(video_url)
+    filename = Path("static", "input", f"{video_id}.mp4")
+    download_video(video_url, filename)
+    logger.info("Video %s downloaded", video_id)
+
+    face_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+    )
+    capture = cv2.VideoCapture(str(filename))
+    output_path = Path(
+        "static", "output", f"{hash(os.environ["SALT"] + video_id + str(time()))}.mp4"
+    )
+    output = cv2.VideoWriter(
+        filename=str(output_path),
+        fourcc=cv2.VideoWriter.fourcc(*"mp4v"),
+        fps=capture.get(cv2.CAP_PROP_FPS),
+        frameSize=(
+            int(capture.get(cv2.CAP_PROP_FRAME_WIDTH)),
+            int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)),
+        ),
+    )
+    try:
+        ret, frame = capture.read()
+        while ret:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(
+                gray, minNeighbors=10, minSize=(30, 30)
+            )
+            for x, y, w, h in faces:
+                cv2.rectangle(
+                    frame, (x, y), (x + w, y + h), color=(0, 255, 255), thickness=2
+                )
+
+            output.write(frame)
+
+            ret, frame = capture.read()
+    except Exception:
+        logger.exception("Error during face detection")
+    finally:
+        capture.release()
+        output.release()
+    logger.info("Face detection completed")
+    return {"video_url": f"/{output_path}"}

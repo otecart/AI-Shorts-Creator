@@ -8,7 +8,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-youtube-dl = {git = "https://github.com/ytdl-org/ytdl-nightly.git", rev = "2024.07.11"}
+youtube-dl = {git = "https://github.com/ytdl-org/ytdl-nightly.git", rev = "2024.07.25"}
 opencv-python = "^4.10.0.84"
 openai = "^1.35.13"
 youtube-transcript-api = "^0.6.2"

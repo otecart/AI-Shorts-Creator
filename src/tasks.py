@@ -1,6 +1,7 @@
 import math
 import os
 import subprocess
+from datetime import datetime, timedelta
 from pathlib import Path
 from time import time
 
@@ -147,3 +148,20 @@ def async_test_face_detection(video_url: str):
         output.release()
     logger.info("Face detection completed")
     return {"video_url": f"/{output_path}"}
+
+
+@broker.task(schedule=[{"cron": "*/5 * * * *"}])
+def remove_old():
+    logger.info("Running old file removal task")
+    time = datetime.now() - timedelta(hours=1)
+    for file in Path("static", "output").iterdir():
+        if file.is_file():
+            if file.stat().st_mtime < time.timestamp():
+                logger.info("Removing %s", file)
+                file.unlink()
+    for file in Path("static", "input").iterdir():
+        if file.is_file():
+            if file.stat().st_mtime < time.timestamp():
+                logger.info("Removing %s", file)
+                file.unlink()
+    logger.info("Old file removal completed")

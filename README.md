@@ -59,7 +59,13 @@ poetry install
 poetry run taskiq worker src.worker:broker src.tasks
 ```
 
-6. Run fastapi server
+6. Run taskiq scheduler
+
+```shell
+poetry run taskiq scheduler --skip-first-run src.worker:scheduler src.tasks
+```
+
+7. Run fastapi server
 
 ```shell
 poetry run fastapi run src/main.py

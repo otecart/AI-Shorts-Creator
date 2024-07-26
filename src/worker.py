@@ -2,6 +2,8 @@ import os
 from datetime import timedelta
 
 import dotenv
+from taskiq import TaskiqScheduler
+from taskiq.schedule_sources import LabelScheduleSource
 from taskiq_aio_pika import AioPikaBroker
 from taskiq_redis import RedisAsyncResultBackend
 
@@ -15,3 +17,6 @@ result_backend = RedisAsyncResultBackend(
 
 rabbitmq_url = f"amqp://{os.environ["RABBITMQ_USER"]}:{os.environ["RABBITMQ_PASS"]}@{os.environ["RABBITMQ_HOST"]}:{os.environ["RABBITMQ_PORT"]}"
 broker = AioPikaBroker(rabbitmq_url).with_result_backend(result_backend)
+
+source = LabelScheduleSource(broker)
+scheduler = TaskiqScheduler(broker, sources=[source])
